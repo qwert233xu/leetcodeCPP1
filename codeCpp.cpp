@@ -2868,8 +2868,8 @@ vector<vector<int>> Solution39::levelOrder(TreeNode* root) {
             TreeNode* node = q.front();
             temp.push_back(node->val);
             q.pop();
-            if (root->left) q.push(root->left); 
-            if (root->right) q.push(root->right); 
+            if (node->left) q.push(node->left); 
+            if (node->right) q.push(node->right); 
         }
         res.push_back(temp);
     }
@@ -7808,20 +7808,20 @@ int Solution112::rob(std::vector<int>& nums) {
 	int resultFornt = robRange(nums, 0, nums.size() - 2);
 	int resultRear = robRange(nums, 1, nums.size() - 1);
 
-	return std::max(resultFornt, resultRear);
+	return fmax(resultFornt, resultRear);
 }
 
 /*
 	动态规划题20：打家劫舍3
 */
 
-struct TreeNode2 {
+struct TreeNode {
 	int val;
-	TreeNode2* left;
-	TreeNode2* right;
-	TreeNode2() : val(0), left(nullptr), right(nullptr) {}
-	TreeNode2(int x) : val(x), left(nullptr), right(nullptr) {}
-	TreeNode2(int x, TreeNode2* left, TreeNode2* right) : val(x), left(left), right(right) {}
+	TreeNode* left;
+	TreeNode* right;
+	TreeNode() : val(0), left(nullptr), right(nullptr) {}
+	TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+	TreeNode(int x, TreeNode* left, TreeNode* right) : val(x), left(left), right(right) {}
 };
 
 class Solution113
@@ -7835,16 +7835,16 @@ public:
 	{
 	}
 
-	int rob(TreeNode2* root);
+	int rob(TreeNode* root);
 
-	std::vector<int> robTree(TreeNode2 *cur);
+	std::vector<int> robTree(TreeNode *cur);
 private:
 
 };
 
 // 本题考察 树形dp     递归三部曲 + 动规五部曲
 // 1、确定递归参数及返回值类型
-std::vector<int> Solution113::robTree(TreeNode2* cur) {
+std::vector<int> Solution113::robTree(TreeNode* cur) {
 	// 2、递归终止条件
 	if (cur == NULL) return std::vector<int>{0, 0};    // dp数组就体现在返回的vector中
 	// 3、开始递归
@@ -7853,7 +7853,7 @@ std::vector<int> Solution113::robTree(TreeNode2* cur) {
 
 	// 后序遍历处理节点
 	// 情况一：不偷                     （不偷 0  偷 1）
-	int val1 = std::max(left[0], left[1]) + std::max(right[0], right[1]);     // 这里为什么要后序遍历   因为偷与不偷 依赖子节点的值
+	int val1 = fmax(left[0], left[1]) + fmax(right[0], right[1]);     // 这里为什么要后序遍历   因为偷与不偷 依赖子节点的值
 																						// 需要先拿到子节点的值，才能比较偷与不偷
 	// 情况二： 偷
 	int val2 = cur->val + left[0] + right[0];
@@ -7861,10 +7861,10 @@ std::vector<int> Solution113::robTree(TreeNode2* cur) {
 	return { val1, val2 };
 }
 
-int Solution113::rob(TreeNode2*root) {
+int Solution113::rob(TreeNode*root) {
 
 	std::vector<int> result = robTree(root);
-	return std::max(result[0], result[1]);
+	return fmax(result[0], result[1]);
 }
 
 /*
@@ -7894,8 +7894,8 @@ int Solution114::maxProfit2(std::vector<int>& prices) {
 
 	for (int i = 0; i < prices.size(); i++)
 	{
-		low = std::max(low, prices[i]);  // 一直指向最小值
-		result = std::max(result, prices[i] - low); // 一直指向最大值
+		low = fmin(low, prices[i]);  // 一直指向最小值
+		result = fmax(result, prices[i] - low); // 一直指向最大值
 	}
 
 	return result;
@@ -7914,8 +7914,8 @@ int Solution114::maxProfit(std::vector<int>& prices) {
 	// 4、确定遍历顺序   i 状态依赖于 i - 1  ， 从前往后遍历
 	for (int i = 1; i < prices.size(); i++)
 	{
-		dp[i][0] = std::max(dp[i - 1][0], -prices[i]);
-		dp[i][1] = std::max(dp[i - 1][1], dp[i - 1][0] + prices[i]);
+		dp[i][0] = fmax(dp[i - 1][0], -prices[i]);
+		dp[i][1] = fmax(dp[i - 1][1], dp[i - 1][0] + prices[i]);
 	}
 	// 5、举例推导出返回值
 	return dp[prices.size() - 1][1];
@@ -7955,8 +7955,8 @@ int Solution115::maxProfit(std::vector<int>& prices) {
 	// 4、确定遍历顺序   顺序遍历
 	for (int i = 1; i < prices.size(); i++)
 	{
-		dp[i][0] = std::max(dp[i - 1][0], dp[i - 1][1] - prices[i]);
-		dp[i][1] = std::max(dp[i - 1][1], dp[i - 1][0] + prices[i]);
+		dp[i][0] = fmax(dp[i - 1][0], dp[i - 1][1] - prices[i]);
+		dp[i][1] = fmax(dp[i - 1][1], dp[i - 1][0] + prices[i]);
 	}
 
 	// 5、举例确定返回值
@@ -8047,8 +8047,8 @@ int Solution117::maxProfit(std::vector<int>& prices, int fee) {
 	// 4、确定遍历顺序   顺序遍历
 	for (int i = 1; i < prices.size(); i++)
 	{
-		dp[i][0] = std::max(dp[i - 1][0], dp[i - 1][1] - prices[i]);
-		dp[i][1] = std::max(dp[i - 1][1], dp[i - 1][0] + prices[i] - fee);
+		dp[i][0] = fmax(dp[i - 1][0], dp[i - 1][1] - prices[i]);
+		dp[i][1] = fmax(dp[i - 1][1], dp[i - 1][0] + prices[i] - fee);
 	}
 	// 5、举例确定返回值
 	return dp[prices.size() - 1][1];
@@ -8420,12 +8420,12 @@ int Solution126::longestPalindromeSubseq(std::string s) {
 	}
 	return dp[0][s.size() - 1];
 }
-int main()
-{	
-	Solution126 s126;
-	std::string s = "bbbab";
-	int res = s126.longestPalindromeSubseq(s);
-	std::cout << res << std::endl;
+//int main()
+//{	
+//	Solution126 s126;
+//	std::string s = "bbbab";
+//	int res = s126.longestPalindromeSubseq(s);
+//	std::cout << res << std::endl;
 
 	/*Solution125 s125;
 	std::string s = "abc";
@@ -8599,4 +8599,1402 @@ int main()
 	//std::vector<int> stones = { 31, 26, 33, 21, 40 };
 	//int res = s102.lastStoneWeightII(stones);
 	//std::cout << res << std::endl;
+//}
+
+
+/*
+	单调栈题1：每日温度
+*/
+class Solution127
+{
+public:
+	Solution127()
+	{
+	}
+
+	~Solution127()
+	{
+	}
+
+	std::vector<int> dailyTemperatures(std::vector<int>& temperatures);
+private:
+
+};
+#include<stack>
+std::vector<int> Solution127::dailyTemperatures(std::vector<int>& temperatures) {
+	std::stack<int> st;   // 保存下标，而非元素，有助于记录距离
+	std::vector<int> result(temperatures.size(), 0);
+
+	st.push(0); // 初始化  下标0
+
+	for (int i = 1; i < temperatures.size(); i++)
+	{
+		if (temperatures[i] <= temperatures[st.top()]) {
+			st.push(i);
+		}
+		else
+		{
+			while (!st.empty() && temperatures[i] > temperatures[st.top()])
+			{
+				result[st.top()] = i - st.top();
+				st.pop();
+			}
+			st.push(i);
+		}
+	}
+	return result;
+}
+
+
+/*
+	剑指offer 1：用两个栈实现队列
+*/
+class Solution128
+{
+public:
+	std::stack<int> numStack1;
+	std::stack<int> numStack2;
+
+	Solution128()
+	{
+	}
+
+	~Solution128()
+	{
+	}
+	// 压栈    不用考虑栈满的情况
+	void appendTail(int value);
+	// 出栈  考虑栈空的情况
+	int deleteHead();
+
+	// 打印队列元素
+	void printQueue();
+private:
+
+};
+
+void Solution128::printQueue() {
+	std::stack<int> temp(numStack1);
+
+	while (!temp.empty())
+	{
+		std::cout << temp.top() << " ";
+		temp.pop();
+	}
+	std::cout << "---------------" << std::endl;
+}
+
+void Solution128::appendTail(int value) {
+	this->numStack1.push(value);
+}
+
+int Solution128::deleteHead() {
+
+	if (!numStack1.empty())
+	{
+		while (!numStack1.empty()) {
+			int value = numStack1.top();
+			numStack2.push(value);
+			numStack1.pop();
+		}
+	}
+	else
+	{
+		return -1;
+	}
+
+	int result = numStack2.top();
+	numStack2.pop();
+
+	while (!numStack2.empty())
+	{
+		int value = numStack2.top();
+		numStack1.push(value);
+		numStack2.pop();
+	}
+
+	return result;
+}
+
+
+/*
+	剑指offer 2：包含min函数的栈
+*/
+class Solution129
+{
+public:
+	Solution129()
+	{
+		minStack.push(INT_MAX);
+	}
+
+	~Solution129()
+	{
+	}
+
+	void push(int x);
+
+	void pop();
+
+	int top();
+
+	int min();
+
+private:
+	std::stack<int> myStack;
+	std::stack<int> minStack;
+};
+
+// 保存每一次压栈操作的最小值
+void Solution129::push(int x) {
+	myStack.push(x);
+
+	if (x > minStack.top())
+	{
+		minStack.push(minStack.top());
+	}
+	else
+	{
+		minStack.push(x);
+	}
+	
+}
+
+void Solution129::pop() {
+	if(!myStack.empty())
+	{	
+		int vDelete = myStack.top();
+		myStack.pop();
+		minStack.pop();
+	}
+
+}
+
+int Solution129::top() {
+	return myStack.top();
+}
+int Solution129::min() {
+	if (!minStack.empty())
+	{
+		return minStack.top();
+	}
+}
+
+/*
+	剑指offer 3：从尾到头打印链表
+*/
+struct ListNode {
+	int val;
+	ListNode* next;
+	ListNode(int x) : val(x), next(NULL) {}
+};
+class Solution130
+{
+public:
+	Solution130()
+	{
+	}
+
+	~Solution130()
+	{
+	}
+
+	std::vector<int> reversePrint(ListNode* head);
+	std::vector<int> reversePrint2(ListNode* head);
+	void backtracking(ListNode* head, std::vector<int>& res);
+private:
+
+};
+
+void Solution130::backtracking(ListNode* head, std::vector<int>& res) {
+	if (head->next == NULL)
+	{	
+		res.push_back(head->val);
+		return;
+	}
+	
+	if (head->next)
+	{
+		backtracking(head->next, res);
+		res.push_back(head->val);
+	}
+
+}
+
+std::vector<int> Solution130::reversePrint(ListNode* head) {
+	std::vector<int>res;
+	if (head == NULL)
+	{
+		return res;
+	}
+	backtracking(head, res);
+
+	return res;
+}
+//#include<algorithm>
+std::vector<int> Solution130::reversePrint2(ListNode* head) {
+	std::vector<int>res;
+	if (head == NULL)
+	{
+		return res;
+	}
+
+	while (head->next)
+	{
+		res.push_back(head->val);
+		head = head->next;
+	}
+	res.push_back(head->val);
+
+	
+	std::reverse(res.begin(), res.end());
+	return res;
+
+}
+
+/*
+	剑指offer 4：反转链表
+*/
+class Solution131
+{
+public:
+	Solution131()
+	{
+	}
+
+	~Solution131()
+	{
+	}
+	ListNode* reverseList(ListNode* head);
+private:
+
+};
+
+
+ListNode* Solution131::reverseList(ListNode* head) {
+	if (head == NULL)
+	{
+		return NULL;
+	}
+	// 双指针法
+	ListNode* cur = head;
+	ListNode* prev = NULL;
+
+	while (cur)
+	{
+		ListNode* temp = cur->next;
+		cur->next = prev;
+		prev = cur;
+		cur = temp;
+	}
+
+	return prev;
+}
+
+/*
+	剑指offer 5：复杂链表的复制
+*/
+class Node {
+public:
+	int val;
+	Node* next;
+	Node* random;
+
+	Node(int _val) {
+		val = _val;
+		next = NULL;
+		random = NULL;
+	}
+};
+#include<unordered_map>
+class Solution132
+{
+public:
+	std::unordered_map<Node*, Node*> cachedNode;
+	Solution132()
+	{
+	}
+
+	~Solution132()
+	{
+	}
+	Node* copyRandomList(Node* head);
+private:
+
+};
+//回溯 + 哈希表           其实回溯就能保证节点的random指针合理创建
+Node* Solution132::copyRandomList(Node* head) {
+	if (head == nullptr) {
+		return nullptr;
+	}
+	if (!cachedNode.count(head)) {  // 判断该节点是否已创建   未创建则进入域
+		Node* headNew = new Node(head->val);
+		cachedNode[head] = headNew;
+		headNew->next = copyRandomList(head->next);
+		headNew->random = copyRandomList(head->random);
+	}
+	return cachedNode[head];
+}
+/*
+	剑指offer 6：替换空格
+*/
+class Solution133
+{
+public:
+	Solution133()
+	{
+	}
+
+	~Solution133()
+	{
+	}
+	std::string replaceSpace(std::string s);
+private:
+
+};
+
+std::string Solution133::replaceSpace(std::string s) {
+	// 1、先根据空格个数扩展原数组大小
+	int count = 0;
+	for (int i = 0; i < s.size(); i++)
+	{
+		if (isspace(s[i])) {
+			count++;
+		}
+	}
+	int oldSize = s.size();
+	int newSize = s.size() + 2*count;
+	s.resize(newSize);
+	// 2、从后往前遍历字符串（优点不被覆盖），替换空格
+	for (int i = newSize - 1, j = oldSize - 1; j >= 0; i--, j--)
+	{
+		if (isspace(s[j]))
+		{
+			s[i] = '0';
+			s[i - 1] = '2';
+			s[i - 2] = '%';
+			i -= 2;
+		}
+		else
+		{
+			s[i] = s[j];
+		}
+		
+	}
+	return s;
+}
+
+/*
+	剑指offer 7：左旋转字符串
+*/
+class Solution134
+{
+public:
+	Solution134()
+	{
+	}
+
+	~Solution134()
+	{
+	}
+	std::string reverseLeftWords(std::string s, int n);
+private:
+
+};
+//输入: s = "abcdefg", k = 2
+//输出 : "cdefgab"
+std::string Solution134::reverseLeftWords(std::string s, int n) {
+	if (n > s.size())
+	{
+		return s;
+	}
+	s.resize(s.size() + n);
+	for (int i = n; i > 0; i--)
+	{
+		s[s.size() - i] = s[n - i];
+	}
+	std::string res = "";
+	res = s.substr(n, s.size());
+	return res;
+}
+/*
+	剑指offer 8：数组中重复的数字
+*/
+class Solution135
+{
+public:
+	Solution135()
+	{
+	}
+
+	~Solution135()
+	{
+	}
+	int findRepeatNumber(std::vector<int>& nums);
+private:
+
+};
+// 使用set容器，装载元素后实时检查元素个数是否改变，若改变则返回该元素
+int Solution135::findRepeatNumber(std::vector<int>& nums) {
+
+	std::unordered_set<int> res;
+
+	for (int i = 0; i < nums.size(); i++)
+	{	
+		int ordSize = res.size();
+		res.insert(nums[i]);
+		if (res.size() == ordSize)
+		{
+			return nums[i];
+		}
+	}
+	return -1;
+}
+
+/*
+	剑指offer 9：在排序数组中查找数字1
+*/
+class Solution136
+{
+public:
+	Solution136()
+	{
+	}
+
+	~Solution136()
+	{
+	}
+
+	int search(std::vector<int>& nums, int target);
+private:
+
+};
+
+int Solution136::search(std::vector<int>& nums, int target) {
+	int res = 0;
+	for (int i = 0; i < nums.size(); i++)
+	{
+		if (nums[i] == target) {
+			res++;
+		}
+		else if (nums[i] > target)
+		{
+			break;
+		}
+	}
+
+	return res;
+}
+
+/*
+	剑指offer 10：0～n-1中缺失的数字
+*/
+class Solution137
+{
+public:
+	Solution137()
+	{
+	}
+
+	~Solution137()
+	{
+	}
+	int missingNumber(std::vector<int>& nums);
+private:
+
+};
+// 通过前后元素差值找到不在集合中的元素
+int Solution137::missingNumber(std::vector<int>& nums) {
+	
+	int n = nums.size();  // 0 ~ n
+
+	//处理 0 ~ n - 1 元素
+	for (int i = 0; i < n; i++)
+	{
+		if (i != nums[i]) {
+			return i;
+		}
+	}
+	// 处理最后一个元素 n
+	if (nums[nums.size() - 1] != nums.size())
+	{
+		return nums.size();
+	}
+	return -1;
+}
+
+/*
+	剑指offer 11：二维数组中的查找
+*/
+class Solution138
+{
+public:
+	Solution138()
+	{
+	}
+
+	~Solution138()
+	{
+	}
+	bool findNumberIn2DArray(std::vector<std::vector<int>>& matrix, int target);
+
+	void binarySearch(std::vector<int>& des, int target, int left, int right, bool& res);
+private:
+
+};
+#include<algorithm>
+//二分查找  每一行
+void Solution138::binarySearch(std::vector<int>& des, int target, int left, int right, bool & res) {
+	int mid = (left + right) / 2;
+	
+	if (mid < des.size())
+	{
+		if (des[mid] == target)
+		{
+			res = true;
+		}
+	}
+	
+	if (left <= right && mid < des.size())
+	{
+		if (des[mid] > target)
+		{
+			binarySearch(des, target, left, mid - 1, res);
+		}
+		else
+		{
+			binarySearch(des, target, mid + 1, right, res);
+		}
+	}
+	
+}
+bool Solution138::findNumberIn2DArray(std::vector<std::vector<int>>& matrix, int target) {
+	if (matrix.size() == 0)
+	{
+		return false;
+	}
+	bool res = false;
+	for (auto x : matrix) {
+		binarySearch(x, target, 0, x.size(), res);
+		if (res)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+//[
+//	[1, 4, 7, 11, 15],
+//	[2, 5, 8, 12, 19],
+//	[3, 6, 9, 16, 22],
+//	[10, 13, 14, 17, 24],
+//	[18, 21, 23, 26, 30]
+//]
+//target = 5    return true
+//target = 10    return false
+
+/*
+	剑指offer 12：旋转数组的最小数字
+*/
+class Solution139
+{
+public:
+	Solution139()
+	{
+	}
+
+	~Solution139()
+	{
+	}
+
+	int minArray(std::vector<int>& numbers);
+private:
+
+};
+// 找到旋转边界点即可
+int Solution139::minArray(std::vector<int>& numbers) {
+	if (numbers.size() == 1)
+	{
+		return numbers[0];
+	}
+	
+	for (int i = 1; i < numbers.size(); i++)
+	{
+		if (numbers[i] < numbers[i - 1])
+		{
+			return numbers[i];
+		}
+	}
+	return numbers[0];
+}
+
+/*
+	剑指offer 13：第一个只出现一次的字符
+*/
+class Solution140
+{
+public:
+	Solution140()
+	{
+	}
+
+	~Solution140()
+	{
+	}
+	char firstUniqChar(std::string s);
+private:
+
+};
+
+// 可以使用map 时间复杂度  n
+char Solution140::firstUniqChar(std::string s) {
+	std::unordered_map<char, int> res;
+
+	for (int i = 0; i < s.size(); i++)
+	{
+		res[s[i]] ++;
+	}
+
+	std::vector<char> res2;
+
+	for (auto pair: res)
+	{	
+		if (pair.second == 1)
+		{
+			res2.push_back(pair.first);
+		}
+	}
+
+	for (int i = 0; i < s.size(); i++)
+	{
+		if (find(res2.begin(), res2.end(), s[i]) != res2.end()) {
+			return s[i];
+		}
+	}
+
+	return ' ';
+}
+
+/*
+	剑指offer 14：从上到下打印二叉树
+*/
+class Solution141
+{
+public:
+	Solution141()
+	{
+	}
+
+	~Solution141()
+	{
+	}
+
+	std::vector<int> levelOrder(TreeNode* root);
+private:
+
+};
+#include<queue>
+// 也就是层序遍历二叉树   回溯
+std::vector<int> Solution141::levelOrder(TreeNode* root) {
+	std::vector<int> res;
+	if (root == NULL) return res;
+	std::queue<TreeNode*> q;
+	q.push(root);
+	while (!q.empty()) {
+		int size = q.size();
+		for (int i = 0; i < size; i++) {
+			TreeNode* node = q.front();
+			res.push_back(node->val);
+			q.pop();
+			if (node->left) q.push(node->left);
+			if (node->right) q.push(node->right);
+		}
+	}
+	return res;
+
+}
+
+/*
+	剑指offer 15：从上到下打印二叉树2
+*/
+class Solution142
+{
+public:
+	Solution142()
+	{
+	}
+
+	~Solution142()
+	{
+	}
+	std::vector<std::vector<int>> levelOrder(TreeNode* root);
+private:
+
+};
+
+std::vector<std::vector<int>> Solution142::levelOrder(TreeNode* root) {
+	std::vector < std::vector<int>> res;
+	if (root == NULL)
+	{
+		return res;
+	}
+
+	std::queue<TreeNode*> q;
+	q.push(root);
+
+	while (!q.empty())
+	{
+		int size = q.size();
+		std::vector<int> temp;
+		for (int i = 0; i < size; i++)
+		{
+			TreeNode* node = q.front();
+			temp.push_back(node->val);
+			q.pop();
+			if (node->left)
+			{
+				q.push(node->left);
+			}
+			if (node->right)
+			{
+				q.push(node->right);
+			}
+		}
+		res.push_back(temp);
+	}
+	return res;
+}
+
+/*
+	剑指offer 16：从上到下打印二叉树3
+*/
+class Solution143
+{
+public:
+	Solution143()
+	{
+	}
+
+	~Solution143()
+	{
+	}
+	std::vector<std::vector<int>> levelOrder(TreeNode* root);
+private:
+
+};
+// 第一层按照从左到右打印，第二层按照从右到左打印，第三层按照从左到右打印。。。以此类推
+std::vector<std::vector<int>> Solution143::levelOrder(TreeNode* root) {
+	std::vector<std::vector<int>> res;
+	if (root == NULL)
+	{
+		return res;
+	}
+
+	std::queue<TreeNode*> q;
+	q.push(root);
+	bool flag = true;
+	while (!q.empty())
+	{
+		int size = q.size();
+		std::vector<int> temp;
+
+		if (flag)
+		{
+			for (int i = 0; i < size; i++)
+			{
+				TreeNode* node = q.front();
+				temp.push_back(node->val);
+				q.pop();
+
+				if (node->left)
+				{
+					q.push(node->left);
+				}
+				if (node->right)
+				{
+					q.push(node->right);
+				}
+			}
+			res.push_back(temp);
+			flag = false;
+		}
+		else
+		{
+			for (int i = 0; i < size; i++)
+			{
+				TreeNode* node = q.front();
+				temp.push_back(node->val);
+				q.pop();
+
+				if (node->left)
+				{
+					q.push(node->left);
+				}
+				if (node->right)
+				{
+					q.push(node->right);
+				}
+			}
+			std::reverse(temp.begin(), temp.end());
+			res.push_back(temp);
+			flag = true;
+		}
+	}
+	return res;
+}
+
+/*
+	剑指offer 17：树的子结构     这个是错误解法
+*/
+class Solution144
+{
+public:
+	Solution144()
+	{
+	}
+
+	~Solution144()
+	{
+	}
+	bool isSubStructure(TreeNode* A, TreeNode* B);
+	void backTracking(TreeNode* root, std::vector<int>& res); // 前序
+	void backTracking2(TreeNode* root, std::vector<int>& res); // 中序
+
+	void getNext(int* next, std::vector<int>& s);
+	int strStr(std::vector<int>& haystack, std::vector<int>& needle);
+private:
+
+};
+
+void Solution144::backTracking(TreeNode* root, std::vector<int>& res) {
+
+	if (root == NULL)
+	{
+		return;
+	}
+
+	res.push_back(root->val);
+
+	if (root->left)
+	{
+		backTracking(root->left, res);
+	}
+	if (root->right)
+	{
+		backTracking(root->right, res);
+	}
+
+}
+void Solution144::backTracking2(TreeNode* root, std::vector<int>& res) {
+
+	if (root == NULL)
+	{
+		return;
+	}
+
+	if (root->left)
+	{
+		backTracking2(root->left, res);
+	}
+	res.push_back(root->val);
+	if (root->right)
+	{
+		backTracking2(root->right, res);
+	}
+}
+
+// KMP 算法对 重要的一步 求next数组，即部分匹配表
+void Solution144::getNext(int* next, std::vector<int>& s) {
+
+	int j = 0;
+	next[0] = 0;
+	for (int i = 1; i < s.size(); i++) {
+		while (j > 0 && s[i] != s[j]) { // j要保证大于0，因为下面有取j-1作为数组下标的操作
+			j = next[j - 1]; // 注意这里，是要找前一位的对应的回退位置了
+		}
+		if (s[i] == s[j]) {
+			j++;
+		}
+		next[i] = j;
+	}
+
+};
+int Solution144::strStr(std::vector<int> &haystack, std::vector<int> &needle) {
+	if (needle.size() == 0) {
+		return 0;
+	}
+	int size = needle.size();
+	int* next = new int[size];
+	getNext(next, needle);
+	int j = 0;
+	for (int i = 0; i < haystack.size(); i++) {
+		while (j > 0 && haystack[i] != needle[j]) {
+			j = next[j - 1];
+		}
+		if (haystack[i] == needle[j]) {
+			j++;
+		}
+		if (j == needle.size()) {
+			return (i - needle.size() + 1);
+		}
+	}
+	return -1;
+}
+
+
+// 先序 + 中序    后序 + 中序  都可以唯一确定一棵子树
+// 可以根据两个树的先序 + 后序是否包含关系确定是否父子树关系
+bool Solution144::isSubStructure(TreeNode* A, TreeNode* B) {
+
+	if (A == NULL || B == NULL)
+	{
+		return false;
+	}
+
+	std::vector<int> preSearchA;
+	std::vector<int> postSearchA;
+	std::vector<int> preSearchB;
+	std::vector<int> postSearchB;
+
+	backTracking(A, preSearchA);
+	backTracking2(A, postSearchA);
+
+	backTracking(B, preSearchB);
+	backTracking2(B, postSearchB);
+
+	for (int i = 0; i < preSearchA.size(); i++)
+	{
+		std::cout << preSearchA[i] << " ";
+	}
+	std::cout << std::endl;
+
+	for (int i = 0; i < postSearchA.size(); i++)
+	{
+		std::cout << postSearchA[i] << " ";
+	}
+	std::cout << std::endl;
+	std::cout << "-------------------" << std::endl;
+
+	for (int i = 0; i < preSearchB.size(); i++)
+	{
+		std::cout << preSearchB[i] << " ";
+	}
+	std::cout << std::endl;
+
+	for (int i = 0; i < postSearchB.size(); i++)
+	{
+		std::cout << postSearchB[i] << " ";
+	}
+	std::cout << std::endl;
+
+
+	// 判断子数组   KMP 算法匹配
+	if (strStr(preSearchA, preSearchB) != -1 && strStr(postSearchA, postSearchB) != -1) {
+		return true;
+	}
+
+	return false;
+}
+
+/*
+	剑指offer 18：二叉树的镜像
+*/
+class Solution145
+{
+public:
+	Solution145()
+	{
+	}
+
+	~Solution145()
+	{
+	}
+	TreeNode* mirrorTree(TreeNode* root);
+private:
+
+};
+
+// 层序遍历的应用
+TreeNode* Solution145::mirrorTree(TreeNode* root) {
+
+	std::queue<TreeNode*> q;
+	q.push(root);
+	while (!q.empty()) {
+		TreeNode* t = q.front();
+		q.pop();
+		if (t) {
+			q.push(t->left);
+			q.push(t->right);
+			TreeNode* tmp = t->left;
+			t->left = t->right;
+			t->right = tmp;
+		}
+	}
+	return root;
+}
+
+/*
+	剑指offer 19：对称的二叉树   未解决
+*/
+class Solution146
+{
+public:
+	Solution146()
+	{
+	}
+
+	~Solution146()
+	{
+	}
+	bool isSymmetric(TreeNode* root);
+	bool isSymmetric2(TreeNode* root);
+	bool check(TreeNode* p, TreeNode* q);
+	TreeNode* mirrorTree(TreeNode* root);
+	std::vector<int> search2(TreeNode* root);
+private:
+
+};
+TreeNode* Solution146::mirrorTree(TreeNode* root) {
+
+	std::queue<TreeNode*> q;
+	q.push(root);
+	while (!q.empty()) {
+		TreeNode* t = q.front();
+		q.pop();
+		if (t) {
+			q.push(t->left);
+			q.push(t->right);
+			TreeNode* tmp = t->left;
+			t->left = t->right;
+			t->right = tmp;
+		}
+	}
+	return root;
+}
+
+std::vector<int> Solution146::search2(TreeNode* root) {
+
+	std::vector<int> res;
+	if (root == nullptr) return res;
+
+	// 使用队列实现
+	std::queue<TreeNode*> q;
+	q.push(root);
+
+	while (!q.empty())
+	{
+
+		int size = q.size();
+		
+		for (int i = 0; i < size; i++)
+		{
+			TreeNode* node = q.front();
+			res.push_back(node->val);
+			q.pop();
+			if (node->left) q.push(node->left);
+			if (node->right) q.push(node->right);
+		}
+	}
+
+	return res;
+}
+
+bool Solution146::isSymmetric(TreeNode* root) {
+	TreeNode* mirrorNode = mirrorTree(root);
+
+	std::vector<int> res1 = search2(root);
+	std::vector<int> res2 = search2(mirrorNode);
+
+	if (res1.size() != res2.size())
+	{
+		return false;
+	}
+
+	for (int i = 0; i < res1.size(); i++)
+	{
+		if (res1[i] != res2[i])
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool Solution146::check(TreeNode* p, TreeNode* q) {
+	if (!p && !q) return true; // 两个都为空 返回true
+	if (!p || !q) return false; // 其中一个不为空返回false
+	return p->val == q->val && check(p->left, q->right) && check(p->right, q->left);
+}
+
+bool Solution146::isSymmetric2(TreeNode* root) {
+	return check(root, root);
+}
+
+int main() {
+
+	Solution146 s146;
+	TreeNode* root = new TreeNode(1);
+	root->left = new TreeNode(4);
+	root->right = new TreeNode(4);
+	root->left->left = new TreeNode(3);
+	root->left->right = new TreeNode(4);
+	root->right->left = new TreeNode(4);
+	root->right->right = new TreeNode(3);
+
+
+	bool res = s146.isSymmetric2(root);
+	std::cout << res << std::endl;
+
+	/*Solution145 s145;
+	TreeNode* root = new TreeNode(4);
+	root->left = new TreeNode(2);
+	root->right = new TreeNode(7);
+	root->left->left = new TreeNode(1);
+	root->left->right = new TreeNode(3);
+	root->right->left = new TreeNode(6);
+	root->right->right = new TreeNode(9);
+
+
+	TreeNode* res = s145.mirrorTree(root);*/
+
+
+	/*Solution144 s144;
+	TreeNode* A = new TreeNode(3);
+	A->left = new TreeNode(4);
+	A->right = new TreeNode(5);
+
+	A->left->left = new TreeNode(1);
+	A->left->right= new TreeNode(2);
+
+	TreeNode* B = new TreeNode(4);
+	B->left = new TreeNode(1);
+
+	bool res = s144.isSubStructure(A, B);
+	std::cout << res << std::endl;*/
+
+
+	/*Solution143 s143;
+	TreeNode* root = new TreeNode(3);
+	root->left = new TreeNode(9);
+	root->right = new TreeNode(20);
+	root->right->left = new TreeNode(15);
+	root->right->right = new TreeNode(7);
+
+	std::vector<std::vector<int>> res = s143.levelOrder(root);
+
+	for (auto y : res)
+	{
+		for (auto x : y)
+		{
+			std::cout << x << " ";
+		}
+		std::cout << std::endl;
+	}*/
+
+
+	/*Solution142 s142;
+	TreeNode* root = new TreeNode(3);
+	root->left = new TreeNode(9);
+	root->right = new TreeNode(20);
+	root->right->left = new TreeNode(15);
+	root->right->right = new TreeNode(7);
+
+	std::vector<std::vector<int>> res = s142.levelOrder(root);
+
+	for (auto y : res)
+	{	
+		for (auto x : y)
+		{
+			std::cout << x << " ";
+		}
+		std::cout << std::endl;
+	}*/
+	
+
+	/*Solution141 s141;
+	TreeNode* root = new TreeNode(3);
+	root->left = new TreeNode(9);
+	root->right = new TreeNode(20);
+	root->right->left = new TreeNode(15);
+	root->right->right = new TreeNode(7);
+
+	std::vector<int> res = s141.levelOrder(root);
+
+	for (auto y : res)
+	{
+		std::cout << y << " ";
+	}
+	std::cout << std::endl;*/
+	
+
+	/*Solution140 s140;
+	std::string s = "dlaeetcoe";
+	char res = s140.firstUniqChar(s);
+	std::cout << res << std::endl;*/
+
+
+	/*Solution139 s139;
+	std::vector<int> nums = {3, 4, 5, 1, 2};
+	int res = s139.minArray(nums);
+	std::cout << res << std::endl;*/
+
+
+	/*Solution138 s138;
+	std::vector<std::vector<int>> nums = { {1, 4, 7, 11, 15}, {2, 5, 8, 12, 19}, {3, 6, 9, 16, 22}, {10, 13, 14, 17, 24}, 
+		{18, 21, 23, 26, 30} };
+	int target = 1000;
+	bool res = s138.findNumberIn2DArray(nums, target);
+	std::cout << res << std::endl;*/
+
+
+	/*Solution137 s137;
+	std::vector<int> nums = {0, 1, 2, 3, 4, 5};
+	int res = s137.missingNumber(nums);
+	std::cout << res << std::endl;*/
+	    
+
+	/*Solution136 s136;
+	std::vector<int> nums = {5, 7, 7, 8, 8, 10};
+	int target = 8;
+	int res = s136.search(nums, target);
+	std::cout << res << std::endl;*/
+
+
+	/*Solution133 s133;
+	std::string s = "We are happy.";
+	std::string res = s133.replaceSpace(s);
+
+	std::cout << res << std::endl;*/
+
+
+	//Solution134 s134;
+	////std::string s = "abcdefg";
+	//std::string s = "lrloseumgh";
+	//std::string res = s134.reverseLeftWords(s, 6);
+	//std::cout << res << std::endl;
+
+
+	/*Solution135 s135;
+	std::vector<int> des = {1, 2, 3, 4, 5, 2, 4, 5};
+	int res = s135.findRepeatNumber(des);
+	std::cout << res << std::endl;*/
+
+
+	/*Solution127 s127;
+	std::vector<int> des = { 73,74,75,71,69,72,76,73 };
+	std::vector<int> res = s127.dailyTemperatures(des);
+	for (auto i = res.begin(); i != res.end(); i++)
+	{
+		std::cout << *i << " ";
+	}*/
+
+
+
+	/*Solution128 s128;
+	
+	s128.appendTail(1);
+	s128.appendTail(2);
+	s128.appendTail(3);
+	s128.appendTail(4);
+	s128.appendTail(5);
+	s128.appendTail(6);
+
+	s128.printQueue();
+
+	int res = s128.deleteHead();
+
+	std::cout << res << std::endl;
+	s128.printQueue();*/
+
+
+
+	/*Solution129 s129;
+
+	s129.push(5);
+
+	int res1 = s129.min();
+	std::cout << res1 << std::endl;
+	s129.push(-2);
+	s129.push(0);
+	s129.push(-3);
+	int res2 = s129.min();
+	std::cout << res2 << std::endl;
+	s129.pop();
+	int res3 = s129.top();
+	std::cout << res3 << std::endl;
+
+	int res4 = s129.min();
+	std::cout << res4 << std::endl;*/
+
+
+
+	/*Solution130 s130;
+	ListNode* root = new ListNode(1);
+	root->next = new ListNode(3);
+	root->next->next = new ListNode(2);
+	std::vector<int> res = s130.reversePrint2(root);
+	for (int i = 0; i < res.size(); i++)
+	{
+		std::cout << res[i] << " ";
+	}*/
+
+
+
+	/*Solution131 s131;
+	ListNode* root = new ListNode(1);
+	root->next = new ListNode(2);
+	root->next->next = new ListNode(3);
+	root->next->next->next = new ListNode(4);
+	root->next->next->next->next = new ListNode(5);
+	root->next->next->next->next->next = NULL;
+
+	ListNode* res = s131.reverseList(root);
+
+	while (res->next)
+	{
+		std::cout << res->val << " ";
+		res = res->next;
+	}
+	std::cout << res->val << std::endl;*/
+
+
+
+	//Solution132 s132;
+
+	////输入：head = [[7, null], [13, 0], [11, 4], [10, 2], [1, 0]]
+	////输出： [[7, null], [13, 0], [11, 4], [10, 2], [1, 0]]
+	//Node* root = new Node(7);
+	//root->random = NULL;
+
+	//root->next = new Node(13);
+	//root->next->random = root;
+
+	//root->next->next = new Node(11);
+	//
+
+
+	//root->next->next->next = new Node(10);
+	//root->next->next->next->random = root->next->next;
+
+	//root->next->next->next->next = new Node(1);
+	//root->next->nex t->next->next->random = root;
+
+	//root->next->next->random = root->next->next->next->next;
+
+
+
+
+	//Node* res = s132.copyRandomList(root);
+	//while (res->next)
+	//{	
+	//	std::cout << res->val << " ";
+	//	res = res->next;
+	//}
+	//std::cout << res->val << std::endl;
+
+	
+	return 0;
 }
